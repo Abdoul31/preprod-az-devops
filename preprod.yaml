@@ -1,0 +1,84 @@
+- name: Déployer un environnement de préproduction Azure
+  hosts: localhost
+  connection: local
+  vars_files:
+    - preprod-vars.yml
+  tasks:
+
+    - name: Créer un groupe de ressources
+      azure.azcollection.azure_rm_resourcegroup:
+        name: "{{ azure_resource_group }}"
+        location: "{{ azure_location }}"
+
+    - name: Créer le réseau virtuel
+      azure.azcollection.azure_rm_virtualnetwork:
+        name: "{{ vnet_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        address_prefixes: "10.0.0.0/16"
+        location: "{{ azure_location }}"
+
+    - name: Créer le sous-réseau
+      azure.azcollection.azure_rm_subnet:
+        name: "{{ subnet_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        virtual_network_name: "{{ vnet_name }}"
+        address_prefix: "10.0.1.0/24"
+
+    - name: Créer une IP publique
+      azure.azcollection.azure_rm_publicipaddress:
+        name: "{{ public_ip_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        allocation_method: Static
+        location: "{{ azure_location }}"
+
+    - name: Créer une interface réseau
+      azure.azcollection.azure_rm_networkinterface:
+        name: "{{ nic_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        location: "{{ azure_location }}"
+        virtual_network: "{{ vnet_name }}"
+        subnet_name: "{{ subnet_name }}"
+        ip_configurations:
+          - name: ipconfig1
+            public_ip_address_name: "{{ public_ip_name }}"
+
+    - name: Créer la machine virtuelle web
+      azure.azcollection.azure_rm_virtualmachine:
+        name: "{{ vm_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        vm_size: "{{ vm_size }}"
+        admin_username: "{{ admin_user }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: "/home/{{ admin_user }}/.ssh/authorized_keys"
+            key_data: "{{ lookup('file', ssh_key_path) }}"
+        image:
+          offer: "0001-com-ubuntu-server-jammy"
+          publisher: "Canonical"
+          sku: "22_04-lts"
+          version: "latest"
+        network_interfaces:
+          - name: "{{ nic_name }}"
+        location: "{{ azure_location }}"
+        tags:
+          env: preprod
+          role: webserver
+
+    - name: Créer la base PostgreSQL managée
+      azure.azcollection.azure_rm_postgresqlserver:
+        name: "{{ postgres_server_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        location: "{{ azure_location }}"
+        sku:
+          name: B_Gen5_1
+          tier: Basic
+        admin_username: "{{ postgres_admin }}"
+        admin_password: "{{ postgres_password }}"
+        ssl_enforcement: Enabled
+        version: "11"
+
+    - name: Créer une base de données PostgreSQL
+      azure.azcollection.azure_rm_postgresqlsqldatabase:
+        name: "{{ postgres_db_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        server_name: "{{ postgres_server_name }}"
