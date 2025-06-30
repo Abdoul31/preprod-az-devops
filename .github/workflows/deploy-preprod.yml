@@ -1,0 +1,42 @@
+name: Déploiement préproduction Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Déployer l'infra sur Azure
+    runs-on: ubuntu-latest
+
+    env:
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+      AZURE_TENANT: ${{ secrets.AZURE_TENANT }}
+
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Ansible et dépendances Azure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install ansible
+          pip3 install 'ansible[azure]'
+          pip3 install azure-cli
+          ansible-galaxy collection install azure.azcollection
+
+      - name: Se connecter à Azure via CLI
+        run: |
+          az login --service-principal \
+            --username "$AZURE_CLIENT_ID" \
+            --password "$AZURE_SECRET" \
+            --tenant "$AZURE_TENANT"
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+      - name: Exécuter le playbook Ansible
+        run: |
+          ansible-playbook playbooks/deploy-preprod.yml -e "@inventories/preprod-vars.yml"
