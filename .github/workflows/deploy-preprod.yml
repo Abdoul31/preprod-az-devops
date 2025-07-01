@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Déployer l'infra sur Azure
+    name: Déploiement de l'infra sur Azure
     runs-on: ubuntu-latest
 
     env:
@@ -21,7 +21,7 @@ jobs:
       - name: Checkout du dépôt
         uses: actions/checkout@v4
 
-      - name: Installer Ansible et dépendances Azure
+      - name: Installation Ansible et dépendances Azure
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip
@@ -30,7 +30,7 @@ jobs:
           pip3 install azure-cli
           ansible-galaxy collection install azure.azcollection
 
-      - name: Se connecter à Azure via CLI
+      - name: connection à Azure via CLI
         run: |
           az login --service-principal \
             --username "$AZURE_CLIENT_ID" \
@@ -38,6 +38,6 @@ jobs:
             --tenant "$AZURE_TENANT"
           az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 
-      - name: Exécuter le playbook Ansible
+      - name: Exécution du playbook Ansible
         run: |
-          ansible-playbook playbooks/preprod.yml -e "preprod-vars.yml"
+          ansible-playbook playbooks/preprod.yml -e preprod-vars.yml
