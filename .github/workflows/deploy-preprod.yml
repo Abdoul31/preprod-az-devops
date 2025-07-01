@@ -37,7 +37,8 @@ jobs:
             --password "$AZURE_SECRET" \
             --tenant "$AZURE_TENANT"
           az account set --subscription "$AZURE_SUBSCRIPTION_ID"
-
+      - name: Lister les fichiers du repo
+        run: ls -R
       - name: Exécution du playbook Ansible
         run: |
-          ansible-playbook playbooks/preprod.yml -e preprod-vars.yml
+          ansible-playbook playbooks/preprod.yml -e "@vars/preprod-vars.yml"
