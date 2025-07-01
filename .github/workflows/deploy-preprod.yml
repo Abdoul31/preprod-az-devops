@@ -40,4 +40,4 @@ jobs:
 
       - name: Exécuter le playbook Ansible
         run: |
-          ansible-playbook preprod.yml -e "@inventories/preprod-vars.yml"
+          ansible-playbook playbooks/preprod.yml -e "preprod-vars.yml"
