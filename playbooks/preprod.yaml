@@ -2,9 +2,9 @@
   hosts: localhost
   connection: local
   vars_files:
-    - preprod-vars.yml
-  tasks:
+    - ../vars/preprod-vars.yml
 
+  tasks:
     - name: Créer un groupe de ressources
       azure.azcollection.azure_rm_resourcegroup:
         name: "{{ azure_resource_group }}"
@@ -76,13 +76,18 @@
         admin_password: "{{ postgres_password }}"
         ssl_enforcement: Enabled
         version: "11"
-    - name: Créer une base de données PostgreSQL
-      azure.azcollection.azure_rm_postgresqlsqldatabase:
-        name: "{{ postgres_db_name }}"
-        resource_group: "{{ azure_resource_group }}"
-        server_name: "{{ postgres_server_name }}"
+
+    - name: methode alternative à az collection Creation la base de données PostgreSQL via Azure CLI
+      shell: |
+        az postgres db create \
+          --name {{ postgres_db_name }} \
+          --resource-group {{ azure_resource_group }} \
+          --server-name {{ postgres_server_name }}
+      environment:
+        AZURE_CONFIG_DIR: /tmp/.azure 
+        
     # - name: Créer une base de données PostgreSQL
-    #   azure.azcollection.azure_rm_postgresql_database:
+    #   azure.azcollection.azure_rm_postgresqlsqldatabase::
     #     name: "{{ postgres_db_name }}"
     #     resource_group: "{{ azure_resource_group }}"
     #     server_name: "{{ postgres_server_name }}"
