@@ -33,8 +33,8 @@ jobs:
           pip3 install azure.mgmt.automation
           pip3 install azure.mgmt.notificationhubs
           pip3 install azure-mgmt-resource azure-mgmt-network azure-mgmt-compute azure-mgmt-rdbms azure-mgmt-datafactory
-          pip3 install kiota_authentication_azure
-          pip3 install 'ansible[azure]' 'msrestazure' 'azure-mgmt-resource' 'azure-mgmt-network' 'azure-mgmt-compute' 'azure-mgmt-rdbms' 'azure-identity'
+         
+          pip3 install 'ansible[azure]' 'msrestazure' 'azure-mgmt-resource' 'azure-mgmt-network' 'azure-mgmt-compute' 'azure-mgmt-rdbms' 'azure-identity' 'kiota_authentication_azure'
           # ~pip3 install -r https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/requirements.txt
           ansible-galaxy collection install azure.azcollection --force
 
