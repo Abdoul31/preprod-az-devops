@@ -51,7 +51,8 @@
         ssh_password_enabled: false
         ssh_public_keys:
           - path: "/home/{{ admin_user }}/.ssh/authorized_keys"
-            key_data: "{{ lookup('file', ssh_key_path) }}"
+            key_data: "{{ lookup('file', playbook_dir + '/../ssh_rsa.pub') }}"
+            #key_data: "{{ lookup('file', ssh_key_path) }}"
         image:
           offer: "0001-com-ubuntu-server-jammy"
           publisher: "Canonical"
@@ -85,7 +86,7 @@
           --server-name {{ postgres_server_name }}
       environment:
         AZURE_CONFIG_DIR: /tmp/.azure 
-        
+
     # - name: Créer une base de données PostgreSQL
     #   azure.azcollection.azure_rm_postgresqlsqldatabase::
     #     name: "{{ postgres_db_name }}"
