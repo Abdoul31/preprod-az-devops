@@ -51,8 +51,8 @@
         ssh_password_enabled: false
         ssh_public_keys:
           - path: "/home/{{ admin_user }}/.ssh/authorized_keys"
-            key_data: "{{ lookup('file', playbook_dir + '/../ssh_rsa.pub') }}"
-            #key_data: "{{ lookup('file', ssh_key_path) }}"
+            key_data: "{{ lookup('file', ../ssh_key.pub) }}"
+           
         image:
           offer: "0001-com-ubuntu-server-jammy"
           publisher: "Canonical"
