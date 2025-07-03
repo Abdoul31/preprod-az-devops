@@ -1,0 +1,66 @@
+---
+- name: Creation d'un cluster AKS dans le groupe de ressource devops-deploy-vm-rg
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  #variables de configuration
+  vars:
+    resource_group: devops-deploy-vm-rg
+    cluster_name: dp-aks-cluster
+    location: francecentral
+    node_count: 2
+    kubernetes_version: "1.32.2"
+    dns_prefix: dpaksdns
+    acr_name: dpacrregistry
+  tasks:
+    #Creation de Azure ACR 
+    - name: Création  d'un ACR
+      azure.azcollection.azure_rm_containerregistry:
+        name: "{{ acr_name }}"
+        resource_group: "{{ resource_group }}"
+        location: "{{ location }}"
+        admin_user_enabled: true
+        sku: Basic
+        state: present
+      register: acr_output
+    #Creation de cluster AKS
+    - name: Création du cluster AKS
+      azure.azcollection.azure_rm_aks:
+        name: "{{ cluster_name }}"
+        resource_group: "{{ resource_group }}"
+        location: "{{ location }}"
+        dns_prefix: "{{ dns_prefix }}"
+        kubernetes_version: "{{ kubernetes_version }}"
+        agent_pool_profiles:
+          - name: default
+            count: "{{ node_count }}"
+            vm_size: standard_b2ms
+            os_type: Linux
+            type: VirtualMachineScaleSets
+            mode: System
+            
+
+        enable_rbac: true
+        network_profile:
+          network_plugin: azure
+          service_cidr: 10.0.0.0/16
+          dns_service_ip: 10.0.0.10
+        state: present
+      register: aks_creation
+      
+    # #Integration ACR avec AKS
+    # - name: Attacher ACR au cluster AKS 
+    #   azure.azcollection.azure_rm_aks:
+    #     name: "{{ cluster_name }}"
+    #     resource_group: "{{ resource_group }}"
+    #     attach_acr: "{{ acr_name }}"
+    #     dns_prefix: "{{ dns_prefix }}"
+
+    #     state: present
+
+    - name: Attacher ACR via commande Azure CLI
+      when: aks_creation.changed
+      ansible.builtin.command: >
+        az aks update -n {{ cluster_name }} -g {{ resource_group }} --attach-acr {{ acr_name }}
+      register: acr_attach
+      changed_when: "'was attached successfully' in acr_attach.stdout"
