@@ -10,28 +10,28 @@
         name: "{{ azure_resource_group }}"
         location: "{{ azure_location }}"
 
-    - name: Créer le réseau virtuel
+    - name: Création de réseau virtuel
       azure.azcollection.azure_rm_virtualnetwork:
         name: "{{ vnet_name }}"
         resource_group: "{{ azure_resource_group }}"
         address_prefixes: "10.0.0.0/16"
         location: "{{ azure_location }}"
 
-    - name: Créer le sous-réseau
+    - name: Création de sous-réseau
       azure.azcollection.azure_rm_subnet:
         name: "{{ subnet_name }}"
         resource_group: "{{ azure_resource_group }}"
         virtual_network_name: "{{ vnet_name }}"
         address_prefix: "10.0.1.0/24"
 
-    - name: Créer une IP publique
+    - name: Création dune IP publique
       azure.azcollection.azure_rm_publicipaddress:
         name: "{{ public_ip_name }}"
         resource_group: "{{ azure_resource_group }}"
         allocation_method: Static
         location: "{{ azure_location }}"
 
-    - name: Créer une interface réseau
+    - name: Création dune interface réseau
       azure.azcollection.azure_rm_networkinterface:
         name: "{{ nic_name }}"
         resource_group: "{{ azure_resource_group }}"
@@ -42,7 +42,7 @@
           - name: ipconfig1
             public_ip_address_name: "{{ public_ip_name }}"
 
-    - name: Créer la machine virtuelle web
+    - name: Création de la machine virtuelle web
       azure.azcollection.azure_rm_virtualmachine:
         name: "{{ vm_name }}"
         resource_group: "{{ azure_resource_group }}"
