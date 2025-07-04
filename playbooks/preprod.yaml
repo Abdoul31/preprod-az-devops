@@ -47,7 +47,6 @@
         name: "{{ vm_name }}"
         resource_group: "{{ azure_resource_group }}"
         vm_size: "{{ vm_size }}"
-        api_version: "2023-09-01"
         admin_username: "{{ admin_user }}"
         ssh_password_enabled: false
         ssh_public_keys:
