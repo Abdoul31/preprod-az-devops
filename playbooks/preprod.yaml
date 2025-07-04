@@ -51,7 +51,7 @@
         ssh_password_enabled: false
         ssh_public_keys:
           - path: "/home/{{ admin_user }}/.ssh/authorized_keys"
-            key_data: "{{ lookup('file', '../vars/ssh_rsa.pub') }}"
+            key_data: "{{ lookup('file', '../id_rsa.pub') }}"
            
         image:
           offer: "0001-com-ubuntu-server-jammy"
