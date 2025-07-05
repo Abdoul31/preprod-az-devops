@@ -1,0 +1,67 @@
+- name: Provisionner une VM Ubuntu sur Azure avec réseau complet
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+    - name: Créer le groupe de ressources
+      azure.azcollection.azure_rm_resourcegroup:
+        name: "{{ azure_resource_group }}"
+        location: "{{ azure_location }}"
+
+    - name: Créer le réseau virtuel
+      azure.azcollection.azure_rm_virtualnetwork:
+        name: vnet1
+        resource_group: "{{ azure_resource_group }}"
+        address_prefixes: "10.0.0.0/16"
+        location: "{{ azure_location }}"
+
+    - name: Créer un sous-réseau
+      azure.azcollection.azure_rm_subnet:
+        name: subnet1
+        resource_group: "{{ azure_resource_group }}"
+        virtual_network: vnet1
+        address_prefix: "10.0.1.0/24"
+
+    - name: Créer une adresse IP publique
+      azure.azcollection.azure_rm_publicipaddress:
+        name: pip1
+        resource_group: "{{ azure_resource_group }}"
+        allocation_method: Dynamic
+        location: "{{ azure_location }}"
+
+    - name: Créer une interface réseau avec IP publique
+      azure.azcollection.azure_rm_networkinterface:
+        name: nic1
+        resource_group: "{{ azure_resource_group }}"
+        location: "{{ azure_location }}"
+        virtual_network: vnet1
+        subnet_name: subnet1
+        create_with_security_group: true
+        ip_configurations:
+          - name: ipconfig1
+            public_ip_address_name: pip1
+
+    - name: Créer une machine virtuelle Ubuntu
+      azure.azcollection.azure_rm_virtualmachine:
+        name: "{{ azure_vm_name }}"
+        resource_group: "{{ azure_resource_group }}"
+        vm_size: Standard_B1s
+        admin_username: "{{ admin_user }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: "/home/{{ admin_user }}/.ssh/authorized_keys"
+            key_data: "{{ lookup('file', ssh_key_path) }}"
+        image:
+          offer: "0001-com-ubuntu-server-jammy"
+          publisher: "Canonical"
+          sku: "22_04-lts"
+          version: "latest"
+        location: "{{ azure_location }}"
+        network_interfaces:
+          - name: nic1
+            primary: true
+        tags:
+          env: dev

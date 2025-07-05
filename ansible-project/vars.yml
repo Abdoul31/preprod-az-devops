@@ -1,0 +1,7 @@
+azure_location: "France Central"
+azure_resource_group: "devops-rg"
+azure_vm_name: "webserver01"
+admin_user: "azureuser"
+ssh_key_path: "~/.ssh/id_rsa.pub"
+
+#ansible_python_interpreter: "/usr/bin/python3"

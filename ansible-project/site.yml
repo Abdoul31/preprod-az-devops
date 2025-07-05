@@ -1,0 +1,6 @@
+- name: Configuration de la machine virtuelle
+  hosts: web
+  become: yes
+  roles:
+    - nginx
+    #- postgresql

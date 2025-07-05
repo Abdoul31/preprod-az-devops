@@ -1,0 +1,17 @@
+- name: Installer Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Activer et démarrer Nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Ouvrir le port 80 dans UFW
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
