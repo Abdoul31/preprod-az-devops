@@ -76,9 +76,9 @@
         admin_password: "{{ postgres_password }}"
         ssl_enforcement: Enabled
         version: "11"
-
     - name: Créer une base de données PostgreSQL
       azure.azcollection.azure_rm_postgresqlsqldatabase:
         name: "{{ postgres_db_name }}"
         resource_group: "{{ azure_resource_group }}"
         server_name: "{{ postgres_server_name }}"
+        #test

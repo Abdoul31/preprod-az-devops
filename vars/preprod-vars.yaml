@@ -9,7 +9,7 @@ nic_name: preprod-nic
 vm_name: preprod-vm
 vm_size: Standard_B1s
 admin_user: azureuser
-ssh_key_path: "ssh_rsa.pub"
+ssh_key_path: "../id_rsa.pub"
 
 postgres_server_name: preprod-postgres
 postgres_admin: ncadmin

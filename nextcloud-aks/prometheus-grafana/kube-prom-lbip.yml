@@ -1,0 +1,14 @@
+grafana:
+  Service:
+    type: LoadBalancer
+    port: 80
+
+prometheus:
+  Service:
+    type: LoadBalancer
+    port: 9090
+
+alertmanager:
+  Service:
+    type: LoadBalancer
+    port: 9093

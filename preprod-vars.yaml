@@ -1,17 +1,17 @@
+azure_resource_group: dp-preprod-rg
 azure_location: francecentral
-azure_resource_group: preprod-rg
 
 vnet_name: preprod-vnet
 subnet_name: preprod-subnet
-nic_name: preprod-nic
-public_ip_name: preprod-pip
 
-vm_name: preprod-web
+public_ip_name: preprod-public-ip
+nic_name: preprod-nic
+vm_name: preprod-vm
 vm_size: Standard_B1s
 admin_user: azureuser
-ssh_key_path: ~/.ssh/id_rsa.pub
+ssh_key_path: ../ssh_key.pub
 
-postgres_server_name: preprod-pgsql
-postgres_admin: pgadmin
+postgres_server_name: preprod-postgres
+postgres_admin: ncadmin
 postgres_password: add@1718!
-postgres_db_name: preprod_db
+postgres_db_name: nextcloud_db
