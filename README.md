@@ -1,4 +1,4 @@
-##Mini Projet
+## Mini Projet
 Ce repository contient l'ensemble des scripts, playbooks Ansible et configurations nécessaires au déploiement automatisé d'infrastructures cloud sur Microsoft Azure dans le cadre de projets DevOps.
 Objectifs
 ## Vue d’ensemble du projet
